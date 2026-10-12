@@ -16,6 +16,6 @@ func main() {
 	fmt.Println("HTTP server started on :8080")
 
 	if err := http.ListenAndServe(":8080", router); err != nil {
-		fmt.Errorf("failed to start HTTP server: %v", err)
+		fmt.Println("failed to start HTTP server:", err)
 	}
 }
