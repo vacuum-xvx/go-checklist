@@ -18,7 +18,8 @@ func main() {
 	router.HandleFunc("POST /tasks", handler.CreateTaskHandler)
 	router.HandleFunc("GET /tasks", handler.ListTasksHandler)
 	router.HandleFunc("DELETE /tasks/{id}", handler.DeleteTaskHandler)
-	router.HandleFunc("PATCH /tasks/{id}", handler.MarkTaskDoneHandler)
+	router.HandleFunc("PATCH /tasks/{id}/done", handler.MarkTaskDoneHandler)
+	router.HandleFunc("GET /health", handler.HealthHandler)
 
 	fmt.Println("HTTP server started on :8080")
 

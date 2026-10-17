@@ -3,22 +3,31 @@ package service
 import "go-checklist-pet/internal/task"
 
 type TaskRepository interface {
-	SaveTask(taskDTO task.TaskDTO) task.Task
+	SaveTask(task task.Task) task.Task
 	List() []task.Task
 	MarkDone(id int) (task.Task, bool)
 	Delete(id int) bool
 }
 
 type TaskService struct {
-	repo TaskRepository
+	repo   TaskRepository
+	nextID int
 }
 
 func NewTaskService(repo TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
-func (s *TaskService) CreateTask(taskDTO task.TaskDTO) task.Task {
-	return s.repo.SaveTask(taskDTO)
+func (s *TaskService) CreateTask(TaskDTO task.TaskDTO) task.Task {
+	s.nextID++
+
+	newTask := task.Task{
+		ID:      s.nextID,
+		TaskDTO: TaskDTO,
+		Done:    false,
+	}
+
+	return s.repo.SaveTask(newTask)
 }
 
 func (s *TaskService) ListTasks() []task.Task {

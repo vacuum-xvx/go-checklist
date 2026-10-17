@@ -6,30 +6,22 @@ import (
 )
 
 type MemoryRepository struct {
-	tasks  []task.Task
-	nextID int
-	mu     sync.Mutex
+	tasks []task.Task
+	mu    sync.Mutex
 }
 
 func NewMemoryRepository() *MemoryRepository {
 	return &MemoryRepository{
-		tasks:  make([]task.Task, 0),
-		nextID: 1,
+		tasks: make([]task.Task, 0),
 	}
 }
 
-func (r *MemoryRepository) SaveTask(taskDTO task.TaskDTO) task.Task {
+func (r *MemoryRepository) SaveTask(newTask task.Task) task.Task {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	newTask := task.Task{
-		ID:      r.nextID,
-		TaskDTO: taskDTO,
-		Done:    false,
-	}
-
-	r.nextID++
 	r.tasks = append(r.tasks, newTask)
+
 	return newTask
 }
 

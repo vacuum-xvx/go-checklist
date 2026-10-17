@@ -12,11 +12,12 @@ import (
 )
 
 type Handler struct {
-	service *service.TaskService
+	service  *service.TaskService
+	validate *validator.Validate
 }
 
 func NewHandler(service *service.TaskService) *Handler {
-	return &Handler{service: service}
+	return &Handler{service: service, validate: validator.New()}
 }
 
 func (h *Handler) CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,8 +27,7 @@ func (h *Handler) CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	validate := validator.New()
-	if err := validate.Struct(taskDTO); err != nil {
+	if err := h.validate.Struct(taskDTO); err != nil {
 		http.Error(w, "Validation failed: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -85,4 +85,9 @@ func taskIDFromPath(r *http.Request) (int, error) {
 		return 0, errors.New("task ID must be a positive integer")
 	}
 	return id, nil
+}
+
+func (h *Handler) HealthHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(`{"status":"ok"}`))
 }
