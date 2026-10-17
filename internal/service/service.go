@@ -10,8 +10,7 @@ type TaskRepository interface {
 }
 
 type TaskService struct {
-	repo   TaskRepository
-	nextID int
+	repo TaskRepository
 }
 
 func NewTaskService(repo TaskRepository) *TaskService {
@@ -19,10 +18,7 @@ func NewTaskService(repo TaskRepository) *TaskService {
 }
 
 func (s *TaskService) CreateTask(TaskDTO task.TaskDTO) task.Task {
-	s.nextID++
-
 	newTask := task.Task{
-		ID:      s.nextID,
 		TaskDTO: TaskDTO,
 		Done:    false,
 	}

@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"go-checklist-pet/internal/service"
 	"go-checklist-pet/internal/task"
 	"net/http"
@@ -36,14 +37,18 @@ func (h *Handler) CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(newTask)
+	if err := json.NewEncoder(w).Encode(newTask); err != nil {
+		fmt.Println("failed to encode response:", err)
+	}
 }
 
 func (h *Handler) ListTasksHandler(w http.ResponseWriter, r *http.Request) {
 	tasks := h.service.ListTasks()
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tasks)
+	if err := json.NewEncoder(w).Encode(tasks); err != nil {
+		fmt.Println("failed to encode response:", err)
+	}
 }
 
 func (h *Handler) MarkTaskDoneHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +65,9 @@ func (h *Handler) MarkTaskDoneHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(updatedTask)
+	if err := json.NewEncoder(w).Encode(updatedTask); err != nil {
+		fmt.Println("failed to encode response:", err)
+	}
 }
 
 func (h *Handler) DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
