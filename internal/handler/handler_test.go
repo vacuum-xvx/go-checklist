@@ -178,7 +178,7 @@ func TestListTasks(t *testing.T) {
 	}
 
 	if len(gotAfter) != 2 {
-		t.Errorf("expected 2 tasks, got %d", len(gotAfter))
+		t.Fatalf("expected 2 tasks, got %d", len(gotAfter))
 	}
 
 	if gotAfter[0].ID != 1 || gotAfter[1].ID != 2 {
@@ -401,6 +401,59 @@ func TestDeleteTaskInvalidIDs(t *testing.T) {
 
 			req := httptest.NewRequest(
 				http.MethodDelete,
+				tt.path,
+				nil,
+			)
+
+			rec := httptest.NewRecorder()
+
+			router.ServeHTTP(rec, req)
+
+			if rec.Code != tt.wantStatus {
+				t.Errorf(
+					"expected %d, got %d",
+					tt.wantStatus,
+					rec.Code,
+				)
+			}
+		})
+	}
+}
+
+func TestPutDoneInvalidIDs(t *testing.T) {
+	tests := []struct {
+		name       string
+		path       string
+		wantStatus int
+	}{
+		{
+			name:       "zero ID",
+			path:       "/tasks/0/done",
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name:       "negative ID",
+			path:       "/tasks/-1/done",
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name:       "text ID",
+			path:       "/tasks/abc/done",
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name:       "not found",
+			path:       "/tasks/999/done",
+			wantStatus: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router := setupRouter()
+
+			req := httptest.NewRequest(
+				http.MethodPut,
 				tt.path,
 				nil,
 			)
