@@ -98,3 +98,11 @@ func (h *Handler) HealthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(`{"status":"ok"}`))
 }
+
+func (h *Handler) RegisterRoutes(router *http.ServeMux) {
+	router.HandleFunc("POST /tasks", h.CreateTaskHandler)
+	router.HandleFunc("GET /tasks", h.ListTasksHandler)
+	router.HandleFunc("DELETE /tasks/{id}", h.DeleteTaskHandler)
+	router.HandleFunc("PUT /tasks/{id}/done", h.MarkTaskDoneHandler)
+	router.HandleFunc("GET /health", h.HealthHandler)
+}

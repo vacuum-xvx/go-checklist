@@ -14,12 +14,7 @@ func main() {
 	handler := handler.NewHandler(service)
 
 	router := http.NewServeMux()
-
-	router.HandleFunc("POST /tasks", handler.CreateTaskHandler)
-	router.HandleFunc("GET /tasks", handler.ListTasksHandler)
-	router.HandleFunc("DELETE /tasks/{id}", handler.DeleteTaskHandler)
-	router.HandleFunc("PUT /tasks/{id}/done", handler.MarkTaskDoneHandler)
-	router.HandleFunc("GET /health", handler.HealthHandler)
+	handler.RegisterRoutes(router)
 
 	fmt.Println("HTTP server started on :8080")
 
