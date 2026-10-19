@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: checklist
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: checklist
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U checklist -d checklist"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+  
+  migrate:
+    image: migrate/migrate:v4.15.2
+    command: ["-path", "/migrations", "-database", "postgres://checklist:${POSTGRES_PASSWORD}@postgres:5432/checklist?sslmode=disable", "up"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+
+volumes:
+  pgdata:
